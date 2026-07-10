@@ -1,4 +1,4 @@
-# S3 bucket
+# S3 Bucket
 resource "aws_s3_bucket" "portfolio" {
   bucket = "ss-portfolio-website-bucket"
 
@@ -7,125 +7,62 @@ resource "aws_s3_bucket" "portfolio" {
   }
 }
 
-<<<<<<< Updated upstream
-# S3 Bucket Static Website Configuration
-resource "aws_s3_bucket_website_configuration" "website_configuration" {
-=======
-# S3 Bucket Ownership Control
+# Bucket Ownership Controls
 resource "aws_s3_bucket_ownership_controls" "portfolio" {
   bucket = aws_s3_bucket.portfolio.id
 
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "BucketOwnerEnforced"
   }
 }
+
 
 # Block Public Access
 resource "aws_s3_bucket_public_access_block" "portfolio" {
->>>>>>> Stashed changes
   bucket = aws_s3_bucket.portfolio.id
 
-  index_document {
-    suffix = "index.html"
-  }
-
-  error_document {
-    key = "404.html"
-  }
+  block_public_acls       = true
+  ignore_public_acls      = true
+  block_public_policy     = true
+  restrict_public_buckets = true
 }
 
-<<<<<<< Updated upstream
-# S3 Bucket Policy
-resource "aws_s3_bucket_policy" "website_policy" {
+# Server Side Encryption
+resource "aws_s3_bucket_server_side_encryption_configuration" "portfolio" {
   bucket = aws_s3_bucket.portfolio.id
-  policy = data.aws_iam_policy_document.website_policy.json
-}
 
-#IAM Policy Document
-data "aws_iam_policy_document" "website_policy" {
-  statement {
-    sid    = "PublicReadGetObject"
-    effect = "Allow"
-
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-=======
-# IAM Policy Document
-data "aws_iam_policy_document" "website_policy" {
-
-  statement {
-
-    sid    = "AllowCloudFrontServicePrincipal"
-    effect = "Allow"
-
-    principals {
-      type = "Service"
-
-      identifiers = [
-        "cloudfront.amazonaws.com"
-      ]
->>>>>>> Stashed changes
-    }
-
-    actions = [
-      "s3:GetObject"
-    ]
-
-    resources = [
-      "${aws_s3_bucket.portfolio.arn}/*"
-    ]
-<<<<<<< Updated upstream
-  }
-=======
-
-    condition {
-      test     = "StringEquals"
-      variable = "AWS:SourceArn"
-
-      values = [
-        aws_cloudfront_distribution.website_distribution.arn
-      ]
+  rule {
+    apply_server_side_encryption_by_default {
+      sse_algorithm = "AES256"
     }
   }
 }
-# S3 Bucket Policy
-resource "aws_s3_bucket_policy" "website_policy" {
-  bucket = aws_s3_bucket.portfolio.id
-  policy = data.aws_iam_policy_document.website_policy.json
-}
 
-# Origin Access Control (OAC)
+# CloudFront Origin Access Control
 resource "aws_cloudfront_origin_access_control" "portfolio_oac" {
   name                              = "portfolio-oac"
   description                       = "Origin Access Control for Portfolio Website"
   origin_access_control_origin_type = "s3"
   signing_behavior                  = "always"
   signing_protocol                  = "sigv4"
->>>>>>> Stashed changes
 }
 
 # CloudFront Distribution
 resource "aws_cloudfront_distribution" "website_distribution" {
 
-  origin {
-    domain_name = aws_s3_bucket_website_configuration.website_configuration.website_endpoint
-    origin_id   = "S3-Website"
-
-    custom_origin_config {
-      http_port              = 80
-      https_port             = 443
-      origin_protocol_policy = "http-only"
-      origin_ssl_protocols   = ["TLSv1.2"]
-    }
-  }
-
   enabled             = true
+  is_ipv6_enabled     = true
   default_root_object = "index.html"
 
-  default_cache_behavior {
+  origin {
+    domain_name              = aws_s3_bucket.portfolio.bucket_regional_domain_name
+    origin_id                = "portfolio-s3-origin"
+    origin_access_control_id = aws_cloudfront_origin_access_control.portfolio_oac.id
+  }
 
-    target_origin_id = "S3-Website"
+  default_cache_behavior {
+    target_origin_id       = "portfolio-s3-origin"
+    viewer_protocol_policy = "redirect-to-https"
 
     allowed_methods = [
       "GET",
@@ -138,7 +75,6 @@ resource "aws_cloudfront_distribution" "website_distribution" {
     ]
 
     forwarded_values {
-
       query_string = false
 
       cookies {
@@ -146,15 +82,12 @@ resource "aws_cloudfront_distribution" "website_distribution" {
       }
     }
 
-    viewer_protocol_policy = "redirect-to-https"
-
     min_ttl     = 0
     default_ttl = 3600
     max_ttl     = 86400
   }
 
   restrictions {
- 
     geo_restriction {
       restriction_type = "none"
     }
@@ -167,8 +100,44 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   tags = {
     Name = "Portfolio CloudFront"
   }
-<<<<<<< Updated upstream
 }
-=======
+
+# Bucket Policy
+
+data "aws_iam_policy_document" "website_policy" {
+
+  statement {
+
+    sid = "AllowCloudFrontServicePrincipalReadOnly"
+
+    actions = [
+      "s3:GetObject"
+    ]
+
+    resources = [
+      "${aws_s3_bucket.portfolio.arn}/*"
+    ]
+
+    principals {
+      type = "Service"
+
+      identifiers = [
+        "cloudfront.amazonaws.com"
+      ]
+    }
+
+    condition {
+      test     = "StringEquals"
+      variable = "AWS:SourceArn"
+
+      values = [
+        aws_cloudfront_distribution.website_distribution.arn
+      ]
+    }
+  }
 }
->>>>>>> Stashed changes
+
+resource "aws_s3_bucket_policy" "website_policy" {
+  bucket = aws_s3_bucket.portfolio.id
+  policy = data.aws_iam_policy_document.website_policy.json
+}

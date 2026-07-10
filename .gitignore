@@ -7,3 +7,8 @@ node_modules/
 # Next.js
 .next/
 out/
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
