@@ -33,9 +33,9 @@ jobs:
             - name: Terraform Format Check
               run: terraform fmt -check
               
-            # 4. Intialize working directory and download providers
+            # 4. Intialize Terraform Without Backend for Validation Only
             - name: Terraform Init
-              run: terraform init
+              run: terraform init -backend=false
               
             # 5. Validate the configuration files
             - name: Terraform Validate
