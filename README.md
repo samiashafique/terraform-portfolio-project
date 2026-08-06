@@ -1,5 +1,7 @@
 # Portfolio Website Deployment
+![Terraform Validation](https://github.com/samiashafique/terraform-portfolio-project/actions/workflows/validate.yml/badge.svg)
 This repository contains the Terraform code to deploy a static Next.js portfolio website on AWS using modern Infrastructure as Code (IaC) and security best practices.
+📄 Read the full writeup: [Deploying a Next.js Portfolio with Terraform, S3, and CloudFront](https://medium.com/@samiashafique/from-project-brief-to-production-style-infrastructure-deploying-a-next-js-908f305a6253)
 
 ## Project Overview
 A freelance web designer required a secure, scalable, and cost-effective solution to host their modern single-page portfolio website built with Next.js. This project demonstrates how to:
@@ -20,6 +22,17 @@ A freelance web designer required a secure, scalable, and cost-effective solutio
 -  AWS CLI - https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 -  AWS Account with permissions to create S3, CloudFront, IAM and DynamoDB resources
 -  Node.js and npm
+
+## CI/CD Pipeline
+Terraform changes are validated automatically before code review using GitHub Actions.
+On every pull request that touches the `terraform/` directory, the workflow:
+1. Checks Terraform formatting (`terraform fmt -check`)
+2. Initializes Terraform without the remote backend (`terraform init -backend=false`)
+3. Validates the configuration (`terraform validate`)
+
+This catches formatting and syntax errors before a human reviewer looks at the change. See the full writeup: [Infrastructure Delivery with GitHub Actions: Part 1](https://medium.com/@samiashafique/production-style-infrastructure-delivery-with-github-actions-part-1-validating-terraform-changes-bd9649f9704a).
+
+*More stages (plan-on-PR, plan-approval-gated apply) are covered in later parts of this series.*
 
 ## Bootstrapping the Remote Backend
 Before initializing Terraform, create the remote backend that will store the Terraform state file and provide state locking.
@@ -128,6 +141,7 @@ Open the CloudFront URL in your browser to view the deployed website.
 - Remote Terraform state with state locking
 
 ## Future Improvements
-- Replace DynamoDB state locking with Terraform's native S3 lockfile support (`use_lockfile`) to align with newer Terraform backend capabilities.
-- Refactor the configuration to use input variables instead of hardcoded values, making the project easier to reuse across different environments.
+* Add a `terraform plan` workflow on pull requests so reviewers can see exactly what will change before merging (in progress — see Part 2 of the article series)
+* Replace DynamoDB state locking with Terraform's native S3 lockfile support (`use_lockfile`)
+* Refactor the configuration to use input variables instead of hardcoded values
 
