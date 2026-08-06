@@ -1,5 +1,5 @@
 # Portfolio Website Deployment
-![Terraform Validation](https://github.com/samiashafique/terraform-portfolio-project/actions/workflows/validate.yml/badge.svg)
+![Terraform Validation](https://github.com/samiashafique/terraform-portfolio-project/actions/workflows/terraform-pr-validation.yml/badge.svg)
 This repository contains the Terraform code to deploy a static Next.js portfolio website on AWS using modern Infrastructure as Code (IaC) and security best practices.
 📄 Read the full writeup: [Deploying a Next.js Portfolio with Terraform, S3, and CloudFront](https://medium.com/@samiashafique/from-project-brief-to-production-style-infrastructure-deploying-a-next-js-908f305a6253)
 
