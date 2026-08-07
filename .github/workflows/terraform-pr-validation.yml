@@ -2,7 +2,6 @@ name: Validate Terraform on Pull Requests
 
 on:
     pull_request:
-        types: [opened, synchronize, reopened]
         paths:
             - 'terraform/**'
 
