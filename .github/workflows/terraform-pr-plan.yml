@@ -33,7 +33,7 @@ jobs:
       #    The audience defaults to sts.amazonaws.com, matching the
       #    client_id_list on the IAM OIDC provider, so it is not set here.
       - name: Configure AWS Credentials via OIDC
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v6
         with:
           aws-region: ca-central-1
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
