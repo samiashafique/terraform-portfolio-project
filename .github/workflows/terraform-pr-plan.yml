@@ -1,0 +1,96 @@
+name: Terraform Plan Only
+
+on:
+  pull_request:
+    paths:
+      - 'terraform/**'
+
+permissions:
+  id-token: write # Required to request the GitHub OIDC token
+  contents: read  # Required to checkout the codebase
+  pull-requests: write # Required to post the plan into the PR as a comment
+
+jobs:
+  terraform-plan:
+    runs-on: ubuntu-latest
+
+    # Define the directory once for the entire job
+    defaults:
+      run:
+        working-directory: terraform
+
+    steps:
+      # 1. Clone the repository code onto the runner
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
+      # 2. Install the specific Terraform CLI version
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: "1.15.8"
+
+      # 3. Exchange the OIDC token for short-lived AWS credentials.
+      #    The audience defaults to sts.amazonaws.com, matching the
+      #    client_id_list on the IAM OIDC provider, so it is not set here.
+      - name: Configure AWS Credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-region: ca-central-1
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+
+      # 4. Initialize Terraform against the real S3 backend.
+      #    Unlike the validation workflow, plan must read state to
+      #    compare configuration against what actually exists.
+      - name: Terraform Init
+        run: terraform init -input=false
+
+      # 5. Generate the execution plan
+      - name: Terraform Plan
+        run: terraform plan -input=false -no-color
+        id: plan # Required to reference the output of this step as a PR comment
+
+      # 6. Post the plan as a comment on PR
+      - name: Comment Plan on PR
+        uses: actions/github-script@v8
+        env:
+          PLAN: ${{steps.plan.outputs.stdout}}
+        with:
+          script: |
+            const marker = '<!-- terraform-plan -->';
+            const body = `${marker}
+            #### Terraform Plan
+            
+            <details><summary>Show plan</summary>
+
+            \`\`\`terraform
+            ${process.env.PLAN}
+            \`\`\`
+
+            </details>`;
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c => c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+            }
+
+            
