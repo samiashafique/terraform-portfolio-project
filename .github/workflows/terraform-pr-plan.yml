@@ -52,7 +52,7 @@ jobs:
 
       # 6. Post the plan as a comment on PR
       - name: Comment Plan on PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         env:
           PLAN: ${{steps.plan.outputs.stdout}}
         with:
@@ -62,7 +62,7 @@ jobs:
             #### Terraform Plan
             
             <details><summary>Show plan</summary>
-            
+
             \`\`\`terraform
             ${process.env.PLAN}
             \`\`\`
