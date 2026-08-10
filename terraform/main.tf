@@ -38,6 +38,11 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "portfolio" {
   }
 }
 
+# AWS-managed cache policy, looked up by name rather than hardcoding its ID
+data "aws_cloudfront_cache_policy" "caching_optimized" {
+  name = "Managed-CachingOptimized"
+}
+
 # CloudFront Origin Access Control
 resource "aws_cloudfront_origin_access_control" "portfolio_oac" {
   name                              = "portfolio-oac"
@@ -74,17 +79,10 @@ resource "aws_cloudfront_distribution" "website_distribution" {
       "HEAD"
     ]
 
-    forwarded_values {
-      query_string = false
-
-      cookies {
-        forward = "none"
-      }
-    }
-
-    min_ttl     = 0
-    default_ttl = 3600
-    max_ttl     = 86400
+    # Replaces the deprecated forwarded_values block and its TTL settings.
+    # Managed-CachingOptimized forwards no cookies, headers or query strings,
+    # which is what a static site wants.
+    cache_policy_id = data.aws_cloudfront_cache_policy.caching_optimized.id
   }
 
   restrictions {
