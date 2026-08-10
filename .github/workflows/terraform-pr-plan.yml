@@ -47,7 +47,7 @@ jobs:
 
       # 5. Generate the execution plan
       - name: Terraform Plan
-        run: terraform plan -input=false -no-color
+        run: terraform plan -input=false -no-color -lock-timeout=5m
         id: plan # Required to reference the output of this step as a PR comment
 
       # 6. Post the plan as a comment on PR
