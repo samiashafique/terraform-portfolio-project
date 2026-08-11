@@ -18,7 +18,7 @@ A freelance web designer required a secure, scalable, and cost-effective solutio
 
 ## Architecture
 
-![Architecture Diagram](docs/terraform-portfolio-website.jpg)
+![Architecture Diagram](docs/terraform-portfolio-website.png)
 
 ## Prerequisites
 -  Terraform CLI - https://developer.hashicorp.com/terraform/install
