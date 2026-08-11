@@ -3,7 +3,8 @@
 ![Terraform Plan](https://github.com/samiashafique/terraform-portfolio-project/actions/workflows/terraform-pr-plan.yml/badge.svg)
 
 This repository contains the Terraform code to deploy a static Next.js portfolio website on AWS using modern Infrastructure as Code (IaC) and security best practices.
-Read the full writeup: [Deploying a Next.js Portfolio with Terraform, S3, and CloudFront](https://medium.com/@samiashafique/from-project-brief-to-production-style-infrastructure-deploying-a-next-js-908f305a6253)
+
+Read the writeup on the initial infrastructure and design decisions: [Deploying a Next.js Portfolio with Terraform, S3, and CloudFront](https://medium.com/@samiashafique/from-project-brief-to-production-style-infrastructure-deploying-a-next-js-908f305a6253). The CI/CD pipeline added since then is covered in its own article series, linked in the [CI/CD Pipeline](#cicd-pipeline) section below.
 
 ## Project Overview
 A freelance web designer required a secure, scalable, and cost-effective solution to host their modern single-page portfolio website built with Next.js. This project demonstrates how to:
