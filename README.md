@@ -26,7 +26,7 @@ A freelance web designer required a secure, scalable, and cost-effective solutio
 -  AWS CLI - https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
 -  AWS Account with permissions to create S3, CloudFront, and IAM resources
 -  Node.js and npm
--  A GitHub repository variable named `AWS_ROLE_ARN` (see [Bootstrapping](#bootstrapping-the-remote-backend-and-ci-role) below) if you want the CI workflows to run
+-  A GitHub repository variable named `AWS_PLAN_ROLE_ARN` (see [Bootstrapping](#bootstrapping-the-remote-backend-and-ci-role) below) if you want the CI workflows to run
 
 ## CI/CD Pipeline
 Terraform changes are checked automatically before code review using two GitHub Actions workflows, both triggered on pull requests that touch `terraform/**`.
