@@ -1,0 +1,55 @@
+name: Terraform Apply
+
+on:
+  push:
+    branches:
+        - main
+    paths:
+      - 'terraform/**'
+
+permissions:
+  contents: read  # Required to checkout the codebase  
+  id-token: write # Required to request the GitHub OIDC token
+
+jobs:
+  terraform-apply:
+    runs-on: ubuntu-latest
+    environment: prod
+    concurrency:
+      group: terraform-apply
+      cancel-in-progress: false
+
+    # Define the directory once for the entire job
+    defaults:
+      run:
+        working-directory: terraform
+
+    steps:
+      # 1. Clone the repository code onto the runner
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
+      # 2. Install the specific Terraform CLI version
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: "1.15.8"
+
+      # 3. Exchange the OIDC token for short-lived AWS credentials.
+      - name: Configure AWS Credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v6
+        with:
+          aws-region: ca-central-1
+          role-to-assume: ${{ vars.AWS_APPLY_ROLE_ARN }}
+
+      # 4. Initialize Terraform against the real S3 backend.
+      - name: Terraform Init
+        run: terraform init -input=false
+
+      # 5. Deploy the infrastructure using terraform configuration files
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -input=false -lock-timeout=5m
+      
+
+
+            

@@ -37,7 +37,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v6
         with:
           aws-region: ca-central-1
-          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          role-to-assume: ${{ vars.AWS_PLAN_ROLE_ARN }}
 
       # 4. Initialize Terraform against the real S3 backend.
       #    Unlike the validation workflow, plan must read state to
