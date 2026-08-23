@@ -8,7 +8,7 @@ on:
       - 'terraform/**'
 
 permissions:
-  contents: read  # Required to checkout the codebase  
+  contents: read  # Required to checkout the codebase
   id-token: write # Required to request the GitHub OIDC token
 
 jobs:
@@ -49,7 +49,3 @@ jobs:
       # 5. Deploy the infrastructure using terraform configuration files
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false -lock-timeout=5m
-      
-
-
-            

@@ -15,13 +15,13 @@ data "aws_iam_policy_document" "github_oidc_trust" {
       identifiers = [aws_iam_openid_connect_provider.github.arn]
     }
 
-    # Restrict token access strictly to your specific GitHub repository
+# Use token minted for AWS only    
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:aud"
       values   = ["sts.amazonaws.com"]
     }
-
+# Restrict token access strictly to your specific GitHub repository
     condition {
       test     = "StringEquals"
       variable = "token.actions.githubusercontent.com:sub"
