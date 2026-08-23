@@ -60,7 +60,7 @@ jobs:
             const marker = '<!-- terraform-plan -->';
             const body = `${marker}
             #### Terraform Plan
-            
+
             <details><summary>Show plan</summary>
 
             \`\`\`terraform
@@ -92,5 +92,3 @@ jobs:
                 body,
               });
             }
-
-            

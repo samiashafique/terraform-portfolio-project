@@ -32,9 +32,9 @@ data "aws_iam_policy_document" "github_oidc_trust_apply" {
 }
 
 # 2. Create the Apply Iam Role
-resource "aws_iam_role" "terraform_apply_role"{
-    name = "github-terraform-apply-role"
-    assume_role_policy = data.aws_iam_policy_document.github_oidc_trust_apply.json
+resource "aws_iam_role" "terraform_apply_role" {
+  name               = "github-terraform-apply-role"
+  assume_role_policy = data.aws_iam_policy_document.github_oidc_trust_apply.json
 }
 
 # 3a. Broad read access for terraform's refresh phase.
@@ -99,7 +99,7 @@ resource "aws_iam_policy" "terraform_apply_writes" {
         ]
       },
       {
-        Sid = "DeleteTerraformStateLock"
+        Sid    = "DeleteTerraformStateLock"
         Effect = "Allow"
         Action = [
           "s3:DeleteObject"

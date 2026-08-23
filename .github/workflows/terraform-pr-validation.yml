@@ -1,43 +1,41 @@
 name: Validate Terraform on Pull Requests
 
 on:
-    pull_request:
-        paths:
-            - 'terraform/**'
+  pull_request:
+    paths:
+      - 'terraform/**'
 
 permissions:
-    contents: read
+  contents: read
 
 jobs:
-    validate-terraform:
-        runs-on: ubuntu-latest
-    
+  validate-terraform:
+    runs-on: ubuntu-latest
+
     # Define the directory once for the entire job
-        defaults:
-            run:
-                working-directory: terraform    
-        
-        steps:
-            # 1. Clone the repository code onto the runner
-            - name: Checkout Code
-              uses: actions/checkout@v7
-            
-            # 2. Install the specific Terraform CLI version
-            - name: Setup Terraform
-              uses: hashicorp/setup-terraform@v4
-              with:
-                terraform_version: "1.15.8"
-              
-            # 3. Check code formatting and flag errors without modifying them
-            - name: Terraform Format Check
-              run: terraform fmt -check
-              
-            # 4. Intialize Terraform Without Backend for Validation Only
-            - name: Terraform Init
-              run: terraform init -backend=false
-              
-            # 5. Validate the configuration files
-            - name: Terraform Validate
-              run: terraform validate
-            
-            
+    defaults:
+      run:
+        working-directory: terraform
+
+    steps:
+      # 1. Clone the repository code onto the runner
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
+      # 2. Install the specific Terraform CLI version
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: "1.15.8"
+
+      # 3. Check code formatting and flag errors without modifying them
+      - name: Terraform Format Check
+        run: terraform fmt -check
+
+      # 4. Initialize Terraform without the backend, for validation only
+      - name: Terraform Init
+        run: terraform init -backend=false
+
+      # 5. Validate the configuration files
+      - name: Terraform Validate
+        run: terraform validate
