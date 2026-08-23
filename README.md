@@ -124,8 +124,6 @@ In GitHub: **Settings → Rules → Rulesets** (or **Settings → Branches**) �
 
 Without this, a direct push to `main` triggers the apply workflow having skipped validation and plan entirely. The approval gate would still hold, but you would be approving a change no plan was ever produced for, and approving something you cannot see is not a review.
 
-Requiring the two PR workflows as status checks is deliberately *not* recommended here. Both filter on `terraform/**`, so a pull request that only touches documentation never runs them, and a required check that never reports leaves the pull request permanently unmergeable. Making that work needs an always-running job that reports success when the filter skips — more machinery than this project earns. Requiring the pull request is what closes the gap.
-
 Once the backend resources exist and both roles are bootstrapped, update the S3 bucket name in `terraform/backend.tf` to match the bucket you created above. You can then continue with the deployment steps below.
 
 ## Steps to Deploy
