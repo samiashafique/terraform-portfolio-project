@@ -100,7 +100,7 @@ resource "aws_cloudfront_distribution" "website_distribution" {
   }
 }
 
-# Bucket Policy
+# Customized Bucket Policy
 
 data "aws_iam_policy_document" "website_policy" {
 
