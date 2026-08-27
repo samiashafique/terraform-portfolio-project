@@ -61,7 +61,7 @@ See the full writeup: [Infrastructure Delivery with GitHub Actions: Part 2](http
 
 Plan and apply use separate roles on purpose. A single role would need one trust policy admitting both triggers, which would give the `pull_request` trigger, running code a contributor controls, the permissions that change infrastructure. The apply role's trust policy pins the token audience, the `prod` environment and the `main` branch, and all three must match before AWS issues credentials. Part 3 of the article series covers the reasoning.
 
-<!-- TODO: link Part 3 of the article series once published -->
+See the full write up: [Infrastructure Delivery with GitHub Actions: Part 3](https://medium.com/@samiashafique/infrastructure-delivery-with-github-actions-part-3-applying-terraform-changes-on-merge-to-main-d843bc20023a?postPublishedType=initial)
 
 **What this pipeline does not do.** It manages infrastructure, not content. The website files still reach S3 through `aws s3 sync` run by hand, so tearing the stack down and rebuilding it restores the bucket and the distribution but not the site. Automating that needs its own workflow and its own role. See [Future Improvements](#future-improvements).
 
